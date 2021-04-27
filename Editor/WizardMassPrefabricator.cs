@@ -12,7 +12,7 @@ namespace BLBits
         public GameObject replacementPrefab;
         public float scaleFactor = 1;
 
-        [MenuItem("GameObject/Mass Prefabricator")]
+        [MenuItem("Tools/Bit Loom/Mass Prefabricator")]
         static void ReplaceObjectWizard()
         {
             ScriptableWizard.DisplayWizard<WizardMassPrefabricator>("Replace all selected objects with replacement prefab?", "Replace all " + Selection.transforms.Length + " selected objects", "Close");

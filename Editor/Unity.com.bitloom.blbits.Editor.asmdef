@@ -1,3 +1,15 @@
-﻿{
-	"name": "com.bitloom.blbits"
+{
+    "name": "com.bitloom.blbits.Editor",
+    "references": [
+        "GUID:bdb9ada68c1f1234dab67c2c75efaebd"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

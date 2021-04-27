@@ -24,7 +24,7 @@ namespace BLBits
         private string assetName = "New Texture";
         private string assetPath = "Assets/";
 
-        [MenuItem("Window/Texture Generator")]
+        [MenuItem("Tools/Bit Loom/Texture Generator")]
         static void ShowWindow()
         {
             TextureGenerator window = EditorWindow.GetWindow<TextureGenerator>();
