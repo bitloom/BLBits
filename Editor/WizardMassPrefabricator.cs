@@ -5,75 +5,79 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 
-public class WizardMassPrefabricator : ScriptableWizard
+namespace BLBits
 {
-    public GameObject replacementPrefab;
-    public float scaleFactor = 1;
-    
-    [MenuItem("GameObject/Mass Prefabricator")]
-    static void ReplaceObjectWizard()
+    public class WizardMassPrefabricator : ScriptableWizard
     {
-        ScriptableWizard.DisplayWizard<WizardMassPrefabricator>("Replace all selected objects with replacement prefab?", "Replace all " + Selection.transforms.Length + " selected objects", "Close");
-    }
+        public GameObject replacementPrefab;
+        public float scaleFactor = 1;
 
-    void OnWizardCreate()
-    {
-        ReplaceSelection(replacementPrefab);
-    }
-
-    void OnWizardOtherButton()
-    {
-        Close();
-    }
-
-    void OnWizardUpdate()
-    {
-        if (replacementPrefab == null)
+        [MenuItem("GameObject/Mass Prefabricator")]
+        static void ReplaceObjectWizard()
         {
-            helpString = "Please set the replacement prefab!";
-            isValid = false;
-        }
-        else if (Selection.transforms.Length <= 0)
-        {
-            helpString = "Please select something!";
-            isValid = false;
-        }
-        else
-        {
-            helpString = "Are you sure you want to replace " + Selection.transforms.Length + " objects in the scene with a " + ObjectNames.NicifyVariableName(replacementPrefab.name) + "?";
-
-            isValid = true;
+            ScriptableWizard.DisplayWizard<WizardMassPrefabricator>("Replace all selected objects with replacement prefab?", "Replace all " + Selection.transforms.Length + " selected objects", "Close");
         }
 
-        createButtonName = "Replace all " + Selection.transforms.Length + " selected objects";
-    }
-
-    private void ReplaceSelection(GameObject replacement)
-    {
-        foreach (Transform selectedTransform in Selection.transforms)
+        void OnWizardCreate()
         {
-            if (selectedTransform != null)
+            ReplaceSelection(replacementPrefab);
+        }
+
+        void OnWizardOtherButton()
+        {
+            Close();
+        }
+
+        void OnWizardUpdate()
+        {
+            if (replacementPrefab == null)
             {
-                GameObject replacementObject = (GameObject)PrefabUtility.InstantiatePrefab(replacementPrefab);
+                helpString = "Please set the replacement prefab!";
+                isValid = false;
+            }
+            else if (Selection.transforms.Length <= 0)
+            {
+                helpString = "Please select something!";
+                isValid = false;
+            }
+            else
+            {
+                helpString = "Are you sure you want to replace " + Selection.transforms.Length + " objects in the scene with a " + ObjectNames.NicifyVariableName(replacementPrefab.name) + "?";
 
-                if (replacementObject != null)
+                isValid = true;
+            }
+
+            createButtonName = "Replace all " + Selection.transforms.Length + " selected objects";
+        }
+
+        private void ReplaceSelection(GameObject replacement)
+        {
+            foreach (Transform selectedTransform in Selection.transforms)
+            {
+                if (selectedTransform != null)
                 {
-                    Undo.RegisterCreatedObjectUndo(replacementObject, "Created replacement game object");
+                    GameObject replacementObject = (GameObject)PrefabUtility.InstantiatePrefab(replacementPrefab);
 
-                    replacementObject.transform.parent = selectedTransform.parent;
-                    replacementObject.transform.SetSiblingIndex(selectedTransform.GetSiblingIndex());
+                    if (replacementObject != null)
+                    {
+                        Undo.RegisterCreatedObjectUndo(replacementObject, "Created replacement game object");
 
-                    replacementObject.transform.position = selectedTransform.position;
-                    replacementObject.transform.rotation = selectedTransform.rotation;
-                    replacementObject.transform.localScale = selectedTransform.localScale * scaleFactor;
+                        replacementObject.transform.parent = selectedTransform.parent;
+                        replacementObject.transform.SetSiblingIndex(selectedTransform.GetSiblingIndex());
 
-                    replacementObject.SetActive(selectedTransform.gameObject.activeInHierarchy);
+                        replacementObject.transform.position = selectedTransform.position;
+                        replacementObject.transform.rotation = selectedTransform.rotation;
+                        replacementObject.transform.localScale = selectedTransform.localScale * scaleFactor;
 
-                    Undo.DestroyObjectImmediate(selectedTransform.gameObject);
+                        replacementObject.SetActive(selectedTransform.gameObject.activeInHierarchy);
+
+                        Undo.DestroyObjectImmediate(selectedTransform.gameObject);
+                    }
                 }
             }
         }
     }
-}
 
 #endif
+
+}

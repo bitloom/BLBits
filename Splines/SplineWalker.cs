@@ -1,163 +1,167 @@
+//from Catlike Coding: https://catlikecoding.com/unity/tutorials/curves-and-splines/
 using UnityEngine;
 
-public class SplineWalker : MonoBehaviour
+namespace BLBits
 {
-    public BezierSpline spline;
-
-    public float duration;
-    public float offset;
-
-    public bool lookForward;
-    public bool useLocalPosition = true;
-
-    public SplineWalkerMode mode;
-
-    public bool useFixedUpdate = false;
-    
-    public float progress;
-    private bool goingForward = true;
-
-    private Rigidbody body;
-
-    void Start()
+    public class SplineWalker : MonoBehaviour
     {
-		      progress = offset / duration;
-        body = GetComponent<Rigidbody>();
+        public BezierSpline spline;
 
-        if(body == null)
-        {
-            useFixedUpdate = false;
-        }
+        public float duration;
+        public float offset;
 
-        if (spline != null)
+        public bool lookForward;
+        public bool useLocalPosition = true;
+
+        public SplineWalkerMode mode;
+
+        public bool useFixedUpdate = false;
+
+        public float progress;
+        private bool goingForward = true;
+
+        private Rigidbody body;
+
+        void Start()
         {
-            if (useLocalPosition)
+            progress = offset / duration;
+            body = GetComponent<Rigidbody>();
+
+            if (body == null)
             {
-                transform.localPosition = spline.GetPoint(progress);
+                useFixedUpdate = false;
             }
-            else
+
+            if (spline != null)
             {
-                transform.position = spline.GetPoint(progress);
-            }
-        }
-    }
-
-	   private void Update ()
-    {
-        if(useFixedUpdate)
-        {
-            return;
-        }
-
-
-        if (goingForward)
-        {
-            progress += Time.deltaTime / duration;
-
-            if (progress > 1f)
-            {
-                if (mode == SplineWalkerMode.Once)
+                if (useLocalPosition)
                 {
-                    progress = 1f;
-                }
-                else if (mode == SplineWalkerMode.Loop)
-                {
-                    progress -= 1f;
+                    transform.localPosition = spline.GetPoint(progress);
                 }
                 else
                 {
-                    progress = 2f - progress;
-                    goingForward = false;
+                    transform.position = spline.GetPoint(progress);
                 }
             }
         }
-        else
-        {
-            progress -= Time.deltaTime / duration;
 
-            if (progress < 0f)
+        private void Update()
+        {
+            if (useFixedUpdate)
             {
-                progress = -progress;
-                goingForward = true;
+                return;
             }
-        }
 
-        if (spline != null)
-        {
-            Vector3 position = spline.GetPoint(progress);
 
-            if (useLocalPosition)
+            if (goingForward)
             {
-                transform.localPosition = position;
+                progress += Time.deltaTime / duration;
+
+                if (progress > 1f)
+                {
+                    if (mode == SplineWalkerMode.Once)
+                    {
+                        progress = 1f;
+                    }
+                    else if (mode == SplineWalkerMode.Loop)
+                    {
+                        progress -= 1f;
+                    }
+                    else
+                    {
+                        progress = 2f - progress;
+                        goingForward = false;
+                    }
+                }
             }
             else
             {
-                transform.position = position;
-            }
+                progress -= Time.deltaTime / duration;
 
-            if (lookForward)
-            {
-                transform.LookAt(position + spline.GetDirection(progress));
-            }
-        }
-	   }
-    
-    private void FixedUpdate()
-    {
-        if (!useFixedUpdate)
-        {
-            return;
-        }
-
-        if (goingForward)
-        {
-            progress += Time.deltaTime / duration;
-
-            if (progress > 1f)
-            {
-                if (mode == SplineWalkerMode.Once)
+                if (progress < 0f)
                 {
-                    progress = 1f;
+                    progress = -progress;
+                    goingForward = true;
                 }
-                else if (mode == SplineWalkerMode.Loop)
+            }
+
+            if (spline != null)
+            {
+                Vector3 position = spline.GetPoint(progress);
+
+                if (useLocalPosition)
                 {
-                    progress -= 1f;
+                    transform.localPosition = position;
                 }
                 else
                 {
-                    progress = 2f - progress;
-                    goingForward = false;
+                    transform.position = position;
+                }
+
+                if (lookForward)
+                {
+                    transform.LookAt(position + spline.GetDirection(progress));
                 }
             }
         }
-        else
-        {
-            progress -= Time.deltaTime / duration;
 
-            if (progress < 0f)
+        private void FixedUpdate()
+        {
+            if (!useFixedUpdate)
             {
-                progress = -progress;
-                goingForward = true;
+                return;
             }
-        }
 
-        if (spline != null)
-        {
-            Vector3 position = spline.GetPoint(progress);
-
-            if (useLocalPosition)
+            if (goingForward)
             {
-                transform.localPosition = position;
+                progress += Time.deltaTime / duration;
+
+                if (progress > 1f)
+                {
+                    if (mode == SplineWalkerMode.Once)
+                    {
+                        progress = 1f;
+                    }
+                    else if (mode == SplineWalkerMode.Loop)
+                    {
+                        progress -= 1f;
+                    }
+                    else
+                    {
+                        progress = 2f - progress;
+                        goingForward = false;
+                    }
+                }
             }
             else
             {
-                body.MovePosition(position);
+                progress -= Time.deltaTime / duration;
+
+                if (progress < 0f)
+                {
+                    progress = -progress;
+                    goingForward = true;
+                }
             }
 
-            if (lookForward)
+            if (spline != null)
             {
-                body.MoveRotation(Quaternion.LookRotation(spline.GetDirection(progress)));
-                //transform.LookAt(position + spline.GetDirection(progress));
+                Vector3 position = spline.GetPoint(progress);
+
+                if (useLocalPosition)
+                {
+                    transform.localPosition = position;
+                }
+                else
+                {
+                    body.MovePosition(position);
+                }
+
+                if (lookForward)
+                {
+                    body.MoveRotation(Quaternion.LookRotation(spline.GetDirection(progress)));
+                    //transform.LookAt(position + spline.GetDirection(progress));
+                }
             }
         }
     }

@@ -2,47 +2,49 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioOccludeZone : DogButtonReceiver
+namespace BLBits
 {
-    public AudioSource[] targetSources;
-
-    private List<IOccludableSound> occludableSounds = new List<IOccludableSound>();
-
-    protected override void Start()
+    public class AudioOccludeZone : ActivatableAudio
     {
-	    base.Start();
-        for(int i = 0; i < targetSources.Length; i++)
-        {
-            IOccludableSound occludable = targetSources[i].GetComponent(typeof(IOccludableSound)) as IOccludableSound;
-            if(occludable != null)
-            {
-                occludableSounds.Add(occludable);
-            }
-        }
-    }
+        public AudioSource[] targetSources;
 
-    private void LateUpdate()
-    {
-        if (active)
+        private List<IOccludableSound> occludableSounds = new List<IOccludableSound>();
+
+        protected void Start()
         {
-            for (int i = 0; i < occludableSounds.Count; i++)
+            for (int i = 0; i < targetSources.Length; i++)
             {
-                if (occludableSounds[i].Occludable())
+                IOccludableSound occludable = targetSources[i].GetComponent(typeof(IOccludableSound)) as IOccludableSound;
+                if (occludable != null)
                 {
-                    occludableSounds[i].SetOcclusionAmount(0);
+                    occludableSounds.Add(occludable);
                 }
             }
         }
-        else
+
+        private void LateUpdate()
         {
-            for (int i = 0; i < occludableSounds.Count; i++)
+            if (active)
             {
-                if (occludableSounds[i].Occludable())
+                for (int i = 0; i < occludableSounds.Count; i++)
                 {
-                    occludableSounds[i].SetOcclusionAmount(1);
+                    if (occludableSounds[i].Occludable())
+                    {
+                        occludableSounds[i].SetOcclusionAmount(0);
+                    }
                 }
             }
+            else
+            {
+                for (int i = 0; i < occludableSounds.Count; i++)
+                {
+                    if (occludableSounds[i].Occludable())
+                    {
+                        occludableSounds[i].SetOcclusionAmount(1);
+                    }
+                }
+            }
+
         }
-        
     }
 }

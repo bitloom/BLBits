@@ -1,163 +1,152 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GenericMovementAudio : MonoBehaviour, IOccludableSound
+namespace BLBits
 {
-    public Transform targetTransform;
-    public AudioSource audioSource;
-    public float movementThreshold = 0.1f;
-    [Range(0.0f,1.0f)]
-    public float maxVolume = 1.0f;
-    public float attackTime = 0.5f;
-    public float releaseTime = 0.5f;
-
-    public bool useRotation = false;
-    public bool useRigidbody = false;
-    public bool ignoreFalling = false;
-
-    public bool randomiseLoopStartPosition = false;
-
-    private Rigidbody body;
-
-    private float curSpeed = 0;
-    private float targetVolume = 0;
-    private Vector3 lastPosition;
-    private Quaternion lastRotation;
-    private float occlusionAmount = 0;
-
-    void Start () 
+    public class GenericMovementAudio : MonoBehaviour, IOccludableSound
     {
-        if (audioSource == null)
-        {
-            audioSource = GetComponent<AudioSource>();
-        }
+        public Transform targetTransform;
+        public AudioSource audioSource;
+        public float movementThreshold = 0.1f;
 
-        if (audioSource == null)
-        {
-            enabled = false;
-            return;
-        }
+        AREnvelope envelope;
 
-        if(targetTransform == null)
-        {
-            targetTransform = transform;
-        }
+        public bool useRotation = false;
+        public bool useRigidbody = false;
+        public bool ignoreFalling = false;
 
-        audioSource.volume = 0;
-        targetVolume = 0;
+        public bool randomiseLoopStartPosition = false;
 
-        if(useRigidbody)
-        {
-            body = targetTransform.GetComponent<Rigidbody>();
-        }
+        private Rigidbody body;
 
-        if (body == null)
-        {
-            useRigidbody = false;
-        }
+        private float curSpeed = 0;
+        private Vector3 lastPosition;
+        private Quaternion lastRotation;
+        private float occlusionAmount = 0;
 
-        lastPosition = targetTransform.position;
-        lastRotation = targetTransform.rotation;
-    }
-    
-    void FixedUpdate()
-    {
-        if (useRigidbody)
+        void Start()
         {
-            if (!useRotation)
+            if (audioSource == null)
             {
-                if(ignoreFalling)
+                audioSource = GetComponent<AudioSource>();
+            }
+
+            if (audioSource == null)
+            {
+                enabled = false;
+                return;
+            }
+
+            if (targetTransform == null)
+            {
+                targetTransform = transform;
+            }
+
+            audioSource.volume = 0;
+
+            if (useRigidbody)
+            {
+                body = targetTransform.GetComponent<Rigidbody>();
+            }
+
+            if (body == null)
+            {
+                useRigidbody = false;
+            }
+
+            lastPosition = targetTransform.position;
+            lastRotation = targetTransform.rotation;
+        }
+
+        void FixedUpdate()
+        {
+            if (useRigidbody)
+            {
+                if (!useRotation)
                 {
-                    curSpeed = Vector3.ProjectOnPlane(body.velocity, Vector3.up).magnitude;
+                    if (ignoreFalling)
+                    {
+                        curSpeed = Vector3.ProjectOnPlane(body.velocity, Vector3.up).magnitude;
+                    }
+                    else
+                    {
+                        curSpeed = body.velocity.magnitude;
+                    }
+                    curSpeed = body.velocity.magnitude;
                 }
                 else
                 {
-                    curSpeed = body.velocity.magnitude;
+                    curSpeed = body.angularVelocity.magnitude;
                 }
-                curSpeed = body.velocity.magnitude;
-            }
-            else
-            {
-                curSpeed = body.angularVelocity.magnitude;
             }
         }
-    }
 
-    void Update () 
-    {
-        if (!useRigidbody)
+        void Update()
         {
-            if (useRotation)
+            if (!useRigidbody)
             {
-                curSpeed = Quaternion.Angle(targetTransform.rotation, lastRotation);
-                lastRotation = targetTransform.rotation;
-            }
-            else
-            {
-                Vector3 movement = targetTransform.position - lastPosition;
-                if(ignoreFalling)
+                if (useRotation)
                 {
-                    movement.y = 0;
+                    curSpeed = Quaternion.Angle(targetTransform.rotation, lastRotation);
+                    lastRotation = targetTransform.rotation;
                 }
-                curSpeed = movement.magnitude;
-                lastPosition = targetTransform.position;
-            }
-        }
-
-        UpdateAudio();
-    }
-
-    private void UpdateAudio()
-    {
-        if (curSpeed >= movementThreshold)
-        {
-            targetVolume = maxVolume;
-        }
-        else
-        {
-            targetVolume = 0.0f;
-        }
-
-        if(targetTransform == null)
-        {
-            targetVolume = 0.0f;
-        }
-
-        targetVolume *= (1.0f - occlusionAmount);
-
-        float curVolume = audioSource.volume;
-        float speed = maxVolume / (targetVolume == 0.0f ? releaseTime : attackTime);
-        curVolume = Mathf.MoveTowards(curVolume, targetVolume, speed * Time.unscaledDeltaTime);
-        
-        audioSource.volume = curVolume;
-
-        if (targetVolume > 0)
-        {
-            if (!audioSource.isPlaying)
-            {
-                if(randomiseLoopStartPosition)
+                else
                 {
-                    audioSource.Stop();
-                    audioSource.timeSamples = Random.Range(0, audioSource.clip.samples);
+                    Vector3 movement = targetTransform.position - lastPosition;
+                    if (ignoreFalling)
+                    {
+                        movement.y = 0;
+                    }
+                    curSpeed = movement.magnitude;
+                    lastPosition = targetTransform.position;
                 }
+            }
 
-                audioSource.Play();
+            UpdateAudio();
+        }
+
+        private void UpdateAudio()
+        {
+            bool audioOn = false;
+            if (curSpeed >= movementThreshold)
+            {
+                audioOn = true;
+            }
+
+            if (targetTransform == null)
+            {
+                audioOn = false;
+            }
+
+            float targetVolume = envelope.Evaluate(audioOn) * (1.0f - occlusionAmount);
+            audioSource.volume = targetVolume;
+
+            if (targetVolume > 0)
+            {
+                if (!audioSource.isPlaying)
+                {
+                    if (randomiseLoopStartPosition)
+                    {
+                        audioSource.Stop();
+                        audioSource.timeSamples = Random.Range(0, audioSource.clip.samples);
+                    }
+
+                    audioSource.Play();
+                }
+            }
+            else if (audioSource.volume == 0)
+            {
+                audioSource.Pause();
             }
         }
-        else if(audioSource.volume == 0)
+
+        public void SetOcclusionAmount(float amount)
         {
-            audioSource.Pause();
+            occlusionAmount = amount;
         }
-    }
 
-    public void SetOcclusionAmount(float amount)
-    {
-        occlusionAmount = amount;
-    }
-
-    public bool Occludable()
-    {
-        return true;
+        public bool Occludable()
+        {
+            return true;
+        }
     }
 }

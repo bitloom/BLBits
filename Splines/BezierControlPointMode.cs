@@ -1,5 +1,9 @@
-public enum BezierControlPointMode {
-    Aligned,
-    Mirrored,
-    Free
+namespace BLBits
+{
+    public enum BezierControlPointMode
+    {
+        Aligned,
+        Mirrored,
+        Free
+    }
 }

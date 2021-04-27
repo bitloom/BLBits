@@ -1,107 +1,110 @@
-using System.Collections;
-using System.Collections.Generic;
+//from Catlike Coding: https://catlikecoding.com/unity/tutorials/curves-and-splines/
+
 using UnityEngine;
 
-public class MoveAlongSpline : MonoBehaviour
+namespace BLBits
 {
-    public BezierSpline spline;
-    
-    [Range(0.0f, 1.0f)]
-    public float t = 0;
-
-    public bool lookAlongSpline = false;
-    public Vector3 lookOffset;
-    
-    public AnimationCurve easing = AnimationCurve.EaseInOut(0,0,1,1);
-    public bool clampTime = true;
-
-    public float raiseSpeed = 1;
-    public float lowerSpeed = 1;
-
-    public bool loop = false;
-
-    public bool overrideButton = false;
-    public bool sendSpeedToAnimator = false;
-    public float maxAnimationSpeed = 2.0f;
-    public string animatorKey = "Speed";
-
-    private Animator animator;
-    private float prevT;
-
-    public bool active = false;
-    
-    public void Activate()
+    public class MoveAlongSpline : MonoBehaviour
     {
-        active = true;
-    }
+        public BezierSpline spline;
 
-    public void Deactivate()
-    {
-        active = false;
-    }
+        [Range(0.0f, 1.0f)]
+        public float t = 0;
 
-    void Start()
-    {
-        if (sendSpeedToAnimator)
+        public bool lookAlongSpline = false;
+        public Vector3 lookOffset;
+
+        public AnimationCurve easing = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        public bool clampTime = true;
+
+        public float raiseSpeed = 1;
+        public float lowerSpeed = 1;
+
+        public bool loop = false;
+
+        public bool overrideButton = false;
+        public bool sendSpeedToAnimator = false;
+        public float maxAnimationSpeed = 2.0f;
+        public string animatorKey = "Speed";
+
+        private Animator animator;
+        private float prevT;
+
+        public bool active = false;
+
+        public void Activate()
         {
-            animator = GetComponent<Animator>();
+            active = true;
         }
 
-        UpdateSplinePosition();
-    }
-
-    void Update()
-    {
-        prevT = t;
-
-        if (active || overrideButton)
+        public void Deactivate()
         {
-            if (!loop)
+            active = false;
+        }
+
+        void Start()
+        {
+            if (sendSpeedToAnimator)
             {
-                t = Mathf.Clamp01(t + (raiseSpeed * Time.deltaTime));
+                animator = GetComponent<Animator>();
+            }
+
+            UpdateSplinePosition();
+        }
+
+        void Update()
+        {
+            prevT = t;
+
+            if (active || overrideButton)
+            {
+                if (!loop)
+                {
+                    t = Mathf.Clamp01(t + (raiseSpeed * Time.deltaTime));
+                }
+                else
+                {
+                    t = Mathf.Repeat(t + (raiseSpeed * Time.deltaTime), 1.0f);
+                }
+
+                UpdateSplinePosition();
             }
             else
             {
-                t = Mathf.Repeat(t + (raiseSpeed * Time.deltaTime), 1.0f);
+                t = Mathf.Clamp01(t - (lowerSpeed * Time.deltaTime));
+
+                UpdateSplinePosition();
             }
-                
-            UpdateSplinePosition();
-        }
-        else
-        {
-            t = Mathf.Clamp01(t - (lowerSpeed * Time.deltaTime));
 
-            UpdateSplinePosition();
-        }
-
-        if (sendSpeedToAnimator && animator)
-        {
-            float speed = Mathf.Abs(t - prevT) > 0 ? maxAnimationSpeed : 0;
-            animator.SetFloat(animatorKey, speed);
-        }
-    }
-
-    void UpdateSplinePosition()
-    {
-        if (spline)
-        {
-            float curT = easing.Evaluate(t);
-            transform.position = spline.GetPoint(curT);
-
-            if (lookAlongSpline)
+            if (sendSpeedToAnimator && animator)
             {
-                transform.rotation = Quaternion.LookRotation(Quaternion.Euler(lookOffset) * spline.GetDirection(curT));
+                float speed = Mathf.Abs(t - prevT) > 0 ? maxAnimationSpeed : 0;
+                animator.SetFloat(animatorKey, speed);
             }
         }
-    }
 
-    public void SwitchSpline(BezierSpline newSpline)
-    {
-        spline = newSpline;
-    }
+        void UpdateSplinePosition()
+        {
+            if (spline)
+            {
+                float curT = easing.Evaluate(t);
+                transform.position = spline.GetPoint(curT);
 
-    public void SetT(float newT)
-    {
-        t = newT;
+                if (lookAlongSpline)
+                {
+                    transform.rotation = Quaternion.LookRotation(Quaternion.Euler(lookOffset) * spline.GetDirection(curT));
+                }
+            }
+        }
+
+        public void SwitchSpline(BezierSpline newSpline)
+        {
+            spline = newSpline;
+        }
+
+        public void SetT(float newT)
+        {
+            t = newT;
+        }
     }
 }
