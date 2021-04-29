@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
 
 namespace BLBits
@@ -62,3 +63,5 @@ namespace BLBits
         }
     }
 }
+
+#endif

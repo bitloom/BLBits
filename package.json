@@ -3,5 +3,5 @@
   "displayName": "Bit Loom Bits",
   "version": "0.0.3",
   "description": "A series of things we use across projects",
-  "hideInEditor": false
+  "type": "library"
 }
