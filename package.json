@@ -1,7 +1,7 @@
 {
   "name": "com.bitloom.blbits",
   "displayName": "Bit Loom Bits",
-  "version": "0.0.4",
+  "version": "0.0.3",
   "description": "A series of things we use across projects",
   "type": "library"
 }
