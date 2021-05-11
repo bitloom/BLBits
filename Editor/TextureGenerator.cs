@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-#define UNITY_EDITOR
 #if UNITY_EDITOR
 using UnityEditor;
 using System.IO;
