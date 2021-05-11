@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+#define UNITY_EDITOR
 #if UNITY_EDITOR
 using UnityEditor;
 using System.IO;
@@ -11,8 +12,6 @@ namespace BLBits
     {
         private Vector2Int textureSize = new Vector2Int(256, 256);
         private TextureType noiseType;
-        private bool useColors = false;
-        private Color[] colors;
         private Vector2 perlinScale = Vector2.one;
         private Vector2 perlinOrigin;
         private Gradient gradient = new Gradient();
@@ -159,15 +158,8 @@ namespace BLBits
                     }
                     else
                     {
-                        if (useColors)
-                        {
-                            pixels[i] = colors[Random.Range(0, colors.Length)] * Random.value;
-                        }
-                        else
-                        {
-                            float r = Random.value;
-                            pixels[i] = new Color(r, r, r, 1);
-                        }
+                        float r = Random.value;
+                        pixels[i] = new Color(r, r, r, 1);
                     }
                 }
             }

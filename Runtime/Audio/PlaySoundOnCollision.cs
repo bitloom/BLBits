@@ -15,8 +15,6 @@ namespace BLBits
         public AudioSource source;
         private float timer = 0.0f;
         private Rigidbody body;
-        private float targetVolume = 0;
-        private float baseVolume = 1.0f;
         private bool collided = false;
 
         void Start()
