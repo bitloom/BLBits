@@ -8,6 +8,7 @@ namespace BLBits
         public Transform lookTarget;
         public Vector3 turnAxis;
         public Vector3 tiltAxis;
+        public Vector3 lookOffset = Vector3.zero;
 
         public float maxHeadTurn = 30.0f;
         public float maxHeadTilt = 15.0f;
@@ -68,7 +69,7 @@ namespace BLBits
                     Vector3 headUp = headBone.TransformDirection(turnAxis);
                     Vector3 headForward = Vector3.Cross(headRight, headUp).normalized;
 
-                    Vector3 targetPos = lookTarget.transform.position;
+                    Vector3 targetPos = lookTarget.transform.position + lookOffset;
 
                     Vector3 lookDirection = (targetPos - headBone.position);
 
@@ -117,7 +118,7 @@ namespace BLBits
                 Vector3 headUp = headBone.TransformDirection(turnAxis);
                 Vector3 headForward = Vector3.Cross(headRight, headUp).normalized;
 
-                Vector3 targetPos = lookTarget.transform.position;
+                Vector3 targetPos = lookTarget.transform.position + lookOffset;
 
                 Vector3 lookDirection = (targetPos - headBone.position);
 
