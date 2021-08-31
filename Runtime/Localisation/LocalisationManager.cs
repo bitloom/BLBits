@@ -27,13 +27,13 @@ public class LocalisationManager
                 break;
         }
 
-        int offset = lang.IndexOf('-');
+        int offset = language.IndexOf('-');
         if (0 < offset)
         {
-            lang = lang.Substring(0, offset);
+            language = language.Substring(0, offset);
         }
 
-        switch(lang)
+        switch(language)
         {
             case ("fr"):    //French
                 return (1);
@@ -72,7 +72,7 @@ public class LocalisationManager
         if (textData == null)
         {
             Debug.LogError("Trying to access Uninitialised Localisation Data!");
-            return;
+            return "ERROR";
         }
 
         string returnString = "MISSING LANGUAGE";
@@ -95,7 +95,7 @@ public class LocalisationManager
         if (textData == null)
         {
             Debug.LogError("Trying to access Uninitialised Localisation Data!");
-            return;
+            return "ERROR";
         }
 
         if (text != null && text.ContainsKey(key))
@@ -117,7 +117,7 @@ public class LocalisationManager
         if (textData == null)
         {
             Debug.LogError("Trying to access Uninitialised Localisation Data!");
-            return;
+            return "ERROR";
         }
 
         if (text != null && text.ContainsKey(key))
@@ -140,7 +140,7 @@ public class LocalisationManager
         if (textData == null)
         {
             Debug.LogError("Trying to access Uninitialised Localisation Data!");
-            return;
+            return "ERROR";
         }
 
         string result = GetText(key);
@@ -167,7 +167,6 @@ public class LocalisationManager
         {
             OnLanguageUpdate();
         }
-        SaveManager.SetLanguage(curLanguage);
     }
 
     public static void IncrementLanguage()

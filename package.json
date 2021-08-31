@@ -3,5 +3,8 @@
   "displayName": "Bit Loom Bits",
   "version": "0.0.4",
   "description": "A series of things we use across projects",
-  "type": "library"
+  "type": "library",
+  "dependencies": {
+    "com.unity.textmeshpro": ""
+  }
 }
