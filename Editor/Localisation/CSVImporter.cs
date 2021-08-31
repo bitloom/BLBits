@@ -10,7 +10,7 @@ public class CSVImporter
 {
     private static Dictionary<string, string[]> stringValues;
 
-    [MenuItem("Build/CSV Importer")]
+    [MenuItem("Tools/Bit Loom/CSV Importer")]
     public static void OpenWindow()
     {
         EditorWindow.GetWindow(typeof(CSVImporterWindow));
@@ -166,36 +166,8 @@ public class CSVImporter
         Debug.Log("JapaneseCharacters.txt updated!");
 
         AssetDatabase.SaveAssets();
-
-        // TODO: figure out how to do this with code
-        Debug.Log("Please update 'NotoSansSC-Bold SDF' and 'MPLUSRounded1c-ExtraBold SDF' now");
         
-        //NotoSansSC-Bold SDF is for Chinese
-        //TMP_FontAsset chineseFont = AssetDatabase.LoadAssetAtPath("Assets/Art/Universal_Art/UI_Art/Fonts/NotoSansSC-Bold SDF.asset", typeof(TMP_FontAsset)) as TMP_FontAsset;
-        //chineseFont.atlaste
-
-        //StringBuilder builder = new StringBuilder();
-        //foreach (string value in chineseData.values)
-        //{
-        //    builder.Append(value);
-        //}
-
-        //FontAssetCreationSettings fontAssetCreationSettings = new FontAssetCreationSettings
-        //{
-
-        //    padding = 5,
-        //    //packingMode
-        //    atlasWidth = 2048,
-        //    atlasHeight = 2048,
-        //    characterSequence = builder.ToString(),
-        //    sourceFontFileName = "Assets/Art/Universal_Art/UI_Art/Fonts/ChineseCharacters.txt",
-        //};
-
-        //TMPro_FontAssetCreatorWindow.GetWindow<TMPro_FontAssetCreatorWindow>().atlas
-        //TMPro_FontAssetCreatorWindow.ShowFontAtlasCreatorWindow(TMP_FontAsset fontAsset);
-
-        //MPLUSRounded1c-ExtraBold SDF is for Japanese
-        //TMP_FontAsset japaneseFont = AssetDatabase.LoadAssetAtPath("Assets/Art/Universal_Art/UI_Art/Fonts/MPLUSRounded1c-ExtraBold SDF.asset", typeof(TMP_FontAsset)) as TMP_FontAsset;
+        Debug.Log("Please update 'NotoSansSC-Bold SDF' and 'MPLUSRounded1c-ExtraBold SDF' now");     
     }
     
     private static string RemoveAlphanumericalCharacters(string text)
