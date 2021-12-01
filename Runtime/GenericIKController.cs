@@ -18,6 +18,8 @@ namespace BLBits
         public float maxHeadTurn = 30.0f;
         public float maxHeadTilt = 15.0f;
 
+        public float targetBehindAngle = 20.0f;
+
         //public float headTurnLerpSpeed = 2.5f;
         //public float headTurnLerpSpeedIgnoreState = 10.0f;
 
@@ -30,6 +32,7 @@ namespace BLBits
         private Quaternion startHeadRotation;
 
         private float targetWeight = 0;
+        private bool targetBehind = false;
 
         private Transform referenceTransform;
 
@@ -74,9 +77,9 @@ namespace BLBits
 
         void LateUpdate()
         {
-            if (automateWeight && targetWeight != weight)
+            if (automateWeight && (targetWeight != weight || targetBehind))
             {
-                weight = Mathf.MoveTowards(weight, targetWeight, weightAutomationSpeed * Time.deltaTime);
+                weight = Mathf.MoveTowards(weight, targetBehind ? 0 : targetWeight, weightAutomationSpeed * Time.deltaTime);
             }
 
             if (headBone)
@@ -128,7 +131,11 @@ namespace BLBits
 
                     Vector3 lookDirection = (targetPos - referenceTransform.position);
 
-                    float turnAngle = Mathf.Clamp(Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headUp), headForward, -headUp), -maxHeadTurn, maxHeadTurn);
+                    float turnAngle = Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headUp), headForward, -headUp);
+                    //Debug.Log(turnAngle);
+                    targetBehind = Mathf.Abs(turnAngle) >= 180 - targetBehindAngle;
+
+                    turnAngle = Mathf.Clamp(Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headUp), headForward, -headUp), -maxHeadTurn, maxHeadTurn);
                     float tiltAngle = Mathf.Clamp(Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headRight), headForward, -headRight), -maxHeadTilt, maxHeadTilt);
 
                     Quaternion targetTurn = Quaternion.AngleAxis(turnAngle, turnAxis);
