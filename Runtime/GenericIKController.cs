@@ -14,11 +14,13 @@ namespace BLBits
 
         public bool automateWeight = false;
         public float weightAutomationSpeed = 1.0f;
+        public float rotateToNewTargetSpeed = 45.0f;
+
+        public bool ignoreBehind = true;
+        public float behindAngle = 60;
 
         public float maxHeadTurn = 30.0f;
         public float maxHeadTilt = 15.0f;
-
-        public float targetBehindAngle = 20.0f;
 
         //public float headTurnLerpSpeed = 2.5f;
         //public float headTurnLerpSpeedIgnoreState = 10.0f;
@@ -32,9 +34,11 @@ namespace BLBits
         private Quaternion startHeadRotation;
 
         private float targetWeight = 0;
-        private bool targetBehind = false;
 
         private Transform referenceTransform;
+
+        private Transform previousLookTarget = null;
+        private Quaternion previousLookRotation = Quaternion.identity;
 
         protected void Start()
         {
@@ -63,6 +67,10 @@ namespace BLBits
             {
                 targetWeight = lookTarget != null ? 1 : 0;
             }
+            else
+            {
+                targetWeight = weight;
+            }
         }
 
         void FixedUpdate()
@@ -77,9 +85,9 @@ namespace BLBits
 
         void LateUpdate()
         {
-            if (automateWeight && (targetWeight != weight || targetBehind))
+            if (targetWeight != weight)
             {
-                weight = Mathf.MoveTowards(weight, targetBehind ? 0 : targetWeight, weightAutomationSpeed * Time.deltaTime);
+                weight = Mathf.MoveTowards(weight, targetWeight, weightAutomationSpeed * Time.deltaTime);
             }
 
             if (headBone)
@@ -132,24 +140,57 @@ namespace BLBits
                     Vector3 lookDirection = (targetPos - referenceTransform.position);
 
                     float turnAngle = Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headUp), headForward, -headUp);
-                    //Debug.Log(turnAngle);
-                    targetBehind = Mathf.Abs(turnAngle) >= 180 - targetBehindAngle;
+                    float tiltAngle = Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headRight), headForward, -headRight);
 
-                    turnAngle = Mathf.Clamp(Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headUp), headForward, -headUp), -maxHeadTurn, maxHeadTurn);
-                    float tiltAngle = Mathf.Clamp(Vector3.SignedAngle(Vector3.ProjectOnPlane(lookDirection, headRight), headForward, -headRight), -maxHeadTilt, maxHeadTilt);
+                    if (automateWeight && Mathf.Abs(turnAngle) > behindAngle)
+                    {
+                        targetWeight = 0;
+                    }
+
+                    turnAngle = Mathf.Clamp(turnAngle, -maxHeadTurn, maxHeadTurn);
+                    tiltAngle = Mathf.Clamp(tiltAngle, -maxHeadTilt, maxHeadTilt);
 
                     Quaternion targetTurn = Quaternion.AngleAxis(turnAngle, turnAxis);
                     Quaternion targetTilt = Quaternion.AngleAxis(tiltAngle, tiltAxis);
 
                     targetRotation = referenceTransform.rotation * targetTilt * targetTurn;
+
+                    if (previousLookTarget != null)
+                    {
+                        targetRotation = Quaternion.RotateTowards(previousLookRotation, targetRotation, rotateToNewTargetSpeed * Time.deltaTime);
+
+                        if (Quaternion.Angle(previousLookRotation, targetRotation) < 1.0f)
+                        {
+                            previousLookTarget = null;
+                        }
+
+                        previousLookRotation = targetRotation;
+                    }
                 }
 
                 headBone.rotation = Quaternion.Lerp(headBone.rotation, targetRotation, weight);
             }
         }
 
+        public void SetTargetWeight(float newTarget)
+        {
+            targetWeight = newTarget;
+        }
+
+        public void SetWeight(float newWeight)
+        {
+            weight = newWeight;
+            targetWeight = newWeight;
+        }
+
         public void SetLookTarget(Transform target)
         {
+            if (target != null && automateWeight)
+            {
+                previousLookTarget = lookTarget;
+                previousLookRotation = headBone.rotation;
+            }
+
             lookTarget = target;
             if (automateWeight)
             {
