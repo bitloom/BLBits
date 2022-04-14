@@ -8,13 +8,29 @@ using System.IO;
 [CanEditMultipleObjects]
 public class LocalisedTextDrawer : PropertyDrawer
 {
-    private static LocalisationData data;    
+    private static LocalisationData data;
     private List<string> keys = new List<string>();
 
-    void Awake()
+    private SearchablePopup searchablePopup;
+    private int curKeyIndex = 0;
+    private bool indexDirty = false;
+
+    void OnEnable()
     {
         SetupKeys();
         //curKeyIndex = FindCurIndex();
+    }
+
+    void OnPopupClose(int selectedItem)
+    {
+        if (selectedItem >= 0)
+        {
+            curKeyIndex = selectedItem;
+            if (selectedItem >= 0)
+            {
+                indexDirty = true;
+            }
+        }
     }
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -26,33 +42,48 @@ public class LocalisedTextDrawer : PropertyDrawer
             SetupKeys();
         }
 
-        int curKeyIndex = FindCurIndex(property.stringValue);
+        //int curKeyIndex = FindCurIndex(property.stringValue);
 
-        EditorGUI.BeginChangeCheck();
+        Rect stringRect = position;
+        stringRect.width -= 10;
+
+        Rect buttonRect = position;
+        buttonRect.x += position.width - 9;
+        buttonRect.width = 9;
+
+        EditorGUI.PropertyField(stringRect, property, label);
+
+        if (GUI.Button(buttonRect, "<"))
+        {
+            PopUpWindow.Show(position, searchablePopup);
+        }
+
+        if (indexDirty)
+        {
+            indexDirty = false;
+            property.stringValue = keys[curKeyIndex];
+        }
+
+        /*EditorGUI.BeginChangeCheck();
 
         curKeyIndex = EditorGUI.Popup(position, "Text Key", curKeyIndex, keys.ToArray());
 
         if (EditorGUI.EndChangeCheck() && keys.Count > 0)
         {
             property.stringValue = keys[curKeyIndex];
-        }
+        }*/
 
         EditorGUI.EndProperty();
     }
 
     void SetupKeys()
-    {        
+    {
         string folderPath = "Assets/Resources/GameData";
-
-#if DEMO_BUILD
-        data = AssetDatabase.LoadAssetAtPath<LocalisationData>(Path.Combine(folderPath, "LocalisationData_Demo.asset"));
-#else
         data = AssetDatabase.LoadAssetAtPath<LocalisationData>(Path.Combine(folderPath, "LocalisationData.asset"));
-#endif        
 
         keys.Clear();
 
-        if(data == null)
+        if (data == null)
         {
             return;
         }
@@ -61,6 +92,9 @@ public class LocalisedTextDrawer : PropertyDrawer
         {
             keys.Add(dataValue.key);
         }
+
+        searchablePopup = new SearchablePopup(keys.ToArray());
+        searchablePopup.onWindowClosed += OnPopupClose;
     }
 
     int FindCurIndex(string targetString)
