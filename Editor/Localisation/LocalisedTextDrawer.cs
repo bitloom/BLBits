@@ -45,17 +45,21 @@ public class LocalisedTextDrawer : PropertyDrawer
         //int curKeyIndex = FindCurIndex(property.stringValue);
 
         Rect stringRect = position;
-        stringRect.width -= 10;
+        stringRect.width -= 25;
 
         Rect buttonRect = position;
-        buttonRect.x += position.width - 9;
-        buttonRect.width = 9;
+        buttonRect.x += position.width - 24;
+        buttonRect.width = 24;
+
+        Rect popupRect = position;
+        popupRect.x += EditorGUIUtility.labelWidth;
+        popupRect.width -= EditorGUIUtility.labelWidth;
 
         EditorGUI.PropertyField(stringRect, property, label);
 
         if (GUI.Button(buttonRect, "<"))
         {
-            PopUpWindow.Show(position, searchablePopup);
+            PopupWindow.Show(position, searchablePopup);
         }
 
         if (indexDirty)
