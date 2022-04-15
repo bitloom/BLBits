@@ -31,16 +31,6 @@ public class SearchablePopup : PopupWindowContent
             labelStyle = new GUIStyle(EditorStyles.label);
             labelStyle.hover = new GUIStyleState();
             labelStyle.hover.textColor = new Color(0.1f, 0.35f, 0.8f);
-            Texture2D background = new Texture2D(10, 10);
-            for(int x = 0; x < 10; x++)
-            {
-                for(int y = 0; y < 10; y++)
-                {
-                    background.SetPixel(x, y, new Color(0, 0.2f, 1.0f));
-                }
-            }
-            background.Apply();
-            labelStyle.hover.background = background;
         }
     }
 
@@ -57,11 +47,11 @@ public class SearchablePopup : PopupWindowContent
         scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
         List<int> indices = Search(searchString);
-        for(int i = 0; i < indices.Count; i++)
+        for (int i = 0; i < indices.Count; i++)
         {
-            if(GUILayout.Button(searchKeys[indices[i]], labelStyle))
+            if (GUILayout.Button(searchKeys[indices[i]], labelStyle))
             {
-                selected = i;
+                selected = indices[i];
                 editorWindow.Close();
             }
         }
@@ -75,9 +65,9 @@ public class SearchablePopup : PopupWindowContent
     {
 
         List<int> results = new List<int>();
-        for(int i = 0; i < searchKeys.Length; i++)
+        for (int i = 0; i < searchKeys.Length; i++)
         {
-            if(searchKeys[i].ToUpper().StartsWith(inputString.ToUpper()))
+            if (searchKeys[i].ToUpper().StartsWith(inputString.ToUpper()))
             {
                 results.Add(i);
             }
@@ -88,17 +78,16 @@ public class SearchablePopup : PopupWindowContent
     public override void OnOpen()
     {
         base.OnOpen();
-
+        selected = -1;
     }
 
     public override void OnClose()
     {
         base.OnClose();
 
-        if(onWindowClosed != null)
+        if (onWindowClosed != null)
         {
             onWindowClosed.Invoke(selected);
         }
-        //ShouldClose = false;
     }
 }
