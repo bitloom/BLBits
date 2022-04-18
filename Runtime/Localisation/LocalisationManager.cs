@@ -60,8 +60,12 @@ public class LocalisationManager
             initialised = true;
             textData = Resources.Load(localisationDataName) as LocalisationData;
 
+            Debug.Log("Initialising Localisation Manager...");
+
             if (textData)
             {
+                Debug.Log("Successfully Loaded Text Data");
+
                 CreateDictionary();
             }
         }

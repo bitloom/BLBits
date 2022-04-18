@@ -58,7 +58,11 @@ public class TextLocaliser : MonoBehaviour
 
         if (tmpText)
         {
-            tmpText.font = LocalisedFontManager.GetLanguageFont();
+            var targetFont = LocalisedFontManager.GetLanguageFont();
+            if(targetFont != null)
+            {
+                tmpText.font = targetFont;
+            }
 
             tmpText.SetText(text);
 

@@ -15,6 +15,8 @@ public class LocalisedTextDrawer : PropertyDrawer
     private int curKeyIndex = 0;
     private bool indexDirty = false;
 
+    private string targetPath = "";
+
     void OnEnable()
     {
         SetupKeys();
@@ -59,10 +61,11 @@ public class LocalisedTextDrawer : PropertyDrawer
 
         if (GUI.Button(buttonRect, "<"))
         {
-            PopupWindow.Show(position, searchablePopup);
+            targetPath = property.propertyPath;
+            PopupWindow.Show(stringRect, searchablePopup);
         }
 
-        if (indexDirty)
+        if (indexDirty && targetPath == property.propertyPath)
         {
             indexDirty = false;
             property.stringValue = keys[curKeyIndex];
