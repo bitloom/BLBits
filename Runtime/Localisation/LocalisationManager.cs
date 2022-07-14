@@ -75,7 +75,7 @@ public class LocalisationManager
     {
         if (textData == null)
         {
-            Debug.LogError("Trying to access Uninitialised Localisation Data!");
+            Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
             return "ERROR";
         }
 
@@ -98,7 +98,7 @@ public class LocalisationManager
     {
         if (textData == null)
         {
-            Debug.LogError("Trying to access Uninitialised Localisation Data!");
+            Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
             return "ERROR";
         }
 
@@ -120,7 +120,7 @@ public class LocalisationManager
     {
         if (textData == null)
         {
-            Debug.LogError("Trying to access Uninitialised Localisation Data!");
+            Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
             return "ERROR";
         }
 
@@ -143,7 +143,7 @@ public class LocalisationManager
     {
         if (textData == null)
         {
-            Debug.LogError("Trying to access Uninitialised Localisation Data!");
+            Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
             return "ERROR";
         }
 

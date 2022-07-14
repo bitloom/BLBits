@@ -6,7 +6,7 @@ using System.IO;
 using System;
 using System.Text.RegularExpressions;
 
-public class CSVImporter 
+public class CSVImporter
 {
     private static Dictionary<string, string[]> stringValues;
 
@@ -44,7 +44,7 @@ public class CSVImporter
             {
                 if (curChar == "\"")
                 {
-                    if(curCharIndex + 1 < buffer.Length && buffer[curCharIndex + 1].ToString() == "\"")
+                    if (curCharIndex + 1 < buffer.Length && buffer[curCharIndex + 1].ToString() == "\"")
                     {
                         curCharIndex++;
                     }
@@ -58,7 +58,7 @@ public class CSVImporter
             else
             {
                 if (curChar == "\"")
-                {        
+                {
                     inQuote = true;
                     curChar = "";
                 }
@@ -71,6 +71,7 @@ public class CSVImporter
                     }
                     else if (curLanguage < numLanguages) //fill in a language for the key
                     {
+                        curWord = curWord;
                         stringValues[curKey][curLanguage] = curWord;
                     }
 
@@ -83,6 +84,7 @@ public class CSVImporter
                 {
                     if (curLanguage < 0)
                     {
+                        curWord = curWord;
                         curKey = curWord;
                         stringValues[curKey] = new string[numLanguages];
                     }
@@ -98,8 +100,8 @@ public class CSVImporter
                     continue;
                 }
             }
-        
-            
+
+
             curWord += curChar;
 
             curCharIndex++;
@@ -137,9 +139,9 @@ public class CSVImporter
             LocalisationDataValue newDataPoint = new LocalisationDataValue();
             newDataPoint.key = key;
             newDataPoint.values = new string[stringValues[key].Length];
-            for(int i = 0; i < stringValues[key].Length; i++)
+            for (int i = 0; i < stringValues[key].Length; i++)
             {
-                newDataPoint.values[i] = stringValues[key][i];
+                newDataPoint.values[i] = RemoveReturnCharacters(stringValues[key][i]);
             }
 
             curData.rawData.Add(newDataPoint);
@@ -147,32 +149,43 @@ public class CSVImporter
 
         curData.numLanguages = numLanguages;
 
-        AssetDatabase.CreateAsset(curData, path);        
+        AssetDatabase.CreateAsset(curData, path);
         Selection.activeObject = curData;
         EditorGUIUtility.PingObject(curData);
         EditorUtility.SetDirty(curData);
 
         AssetDatabase.SaveAssets();
 
-        // Update Chinese and Japanese text files      
-        string chineseText = GetAllTextForLanguage(languageIndex: 5);
-        chineseText = RemoveAlphanumericalCharacters(chineseText); // The alpha numerical characters are handled by falling back to the regular Phont
-        File.WriteAllText("Assets/Art/Universal_Art/UI_Art/Fonts/ChineseCharacters.txt", chineseText);
-        Debug.Log("ChineseCharacters.txt updated!");
+        if (numLanguages > 5)
+        {
+            // Update Chinese and Japanese text files      
+            string chineseText = GetAllTextForLanguage(languageIndex: 5);
+            chineseText = RemoveAlphanumericalCharacters(chineseText); // The alpha numerical characters are handled by falling back to the regular Phont
+            File.WriteAllText("Assets/Art/Universal_Art/UI_Art/Fonts/ChineseCharacters.txt", chineseText);
+            Debug.Log("ChineseCharacters.txt updated!");
+        }
 
-        string japaneseText = GetAllTextForLanguage(languageIndex: 6);
-        japaneseText = RemoveAlphanumericalCharacters(japaneseText);
-        File.WriteAllText("Assets/Art/Universal_Art/UI_Art/Fonts/JapaneseCharacters.txt", japaneseText);
-        Debug.Log("JapaneseCharacters.txt updated!");
+        if (numLanguages > 6)
+        {
+            string japaneseText = GetAllTextForLanguage(languageIndex: 6);
+            japaneseText = RemoveAlphanumericalCharacters(japaneseText);
+            File.WriteAllText("Assets/Art/Universal_Art/UI_Art/Fonts/JapaneseCharacters.txt", japaneseText);
+            Debug.Log("JapaneseCharacters.txt updated!");
+        }
 
         AssetDatabase.SaveAssets();
-        
-        Debug.Log("Please update 'NotoSansSC-Bold SDF' and 'MPLUSRounded1c-ExtraBold SDF' now");     
+
+        Debug.Log("Please update 'NotoSansSC-Bold SDF' and 'MPLUSRounded1c-ExtraBold SDF' now");
     }
-    
+
     private static string RemoveAlphanumericalCharacters(string text)
-    {        
+    {
         return Regex.Replace(input: text, pattern: "[a-zA-Z0-9]", replacement: "");
+    }
+
+    private static string RemoveReturnCharacters(string text)
+    {
+        return Regex.Replace(input: text, pattern: "\r", replacement: "");
     }
 
     private static string GetAllTextForLanguage(int languageIndex)
