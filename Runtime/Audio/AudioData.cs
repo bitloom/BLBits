@@ -20,6 +20,11 @@ namespace BLBits
             this.evalVolume = 0;
         }
 
+        public void Reset()
+        {
+            evalVolume = 0;
+        }
+
         public float Evaluate(bool on)
         {
             if(on)
