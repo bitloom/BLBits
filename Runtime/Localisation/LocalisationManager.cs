@@ -204,4 +204,9 @@ public class LocalisationManager
             text[dataValue.key] = dataValue.values;
         }
     }
+
+    public static LocalisationData GetData()
+    {
+        return textData;
+    }
 }
