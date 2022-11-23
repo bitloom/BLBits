@@ -12,6 +12,7 @@ public class LocalisationDataValue
 public class LocalisationData : ScriptableObject
 {
     public int numLanguages = 1;
+    public List<string> languageCodes = new List<string>();
     public List<LocalisationDataValue> rawData = new List<LocalisationDataValue>();
 }
 
