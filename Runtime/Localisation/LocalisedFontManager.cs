@@ -26,7 +26,7 @@ public class LocalisedFontManager : MonoBehaviour
 
     private TMP_FontAsset GetFont(int targetLanguage)
     {
-        if(targetLanguage < fonts.Length && fonts[targetLanguage] != null)
+        if(targetLanguage >= 0 && targetLanguage < fonts.Length && fonts[targetLanguage] != null)
         {
             return fonts[targetLanguage];
         }

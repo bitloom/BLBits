@@ -17,40 +17,46 @@ public class LocalisationManager
 
     public static string LocalisationFileName = string.Empty;
 
-    public static int SystemCodeToIndex(string language)
+    public static int SystemCodeToIndex(string languageCode)
     {
-        switch (language)
+        if(textData == null || languageCode == "en-US")
         {
-            case ("en-US"):
-                return (0);
-            default:
-                break;
+            return 0;
         }
 
-        int offset = language.IndexOf('-');
-        if (0 < offset)
+        int languageIndex = textData.languageCodes.IndexOf(languageCode.ToUpper());
+        if (languageIndex >= 0)
         {
-            language = language.Substring(0, offset);
+            return languageIndex;
+        }
+        return -1;
+    }
+
+
+    public static bool CurLanguageIs(string languageCode)
+    {
+        if(textData == null)
+        {
+            return false;
         }
 
-        switch(language)
+        int index = textData.languageCodes.IndexOf(languageCode);
+        if(index<0)
         {
-            case ("fr"):    //French
-                return (1);
-            case ("it"):    //Italy
-                return (2);
-            case ("de"):    //german
-                return (3);
-            case ("es"):    //spanish
-                return (4);
-            case ("zh"):    //Chinese
-                return (5);
-            case ("ja"):    //Japanese
-                return (6);
-            case ("en"):
-            default:
-                return (0);
+            return false;
         }
+
+        return index == curLanguage;
+    }
+
+    public static string GetLanguageCode(int languageIndex)
+    {
+        if(textData == null || languageIndex < 0 || languageIndex >= textData.languageCodes.Count)
+        {
+            return string.Empty;
+        }
+
+        return textData.languageCodes[languageIndex];
     }
 
     public static void Initialise(string localisationDataName)

@@ -16,13 +16,15 @@ public class CSVImporter
         EditorWindow.GetWindow(typeof(CSVImporterWindow));
     }
 
-    public static void LoadCSV(string path, string assetName = "", int numLanguages = 1)
+    public static void LoadCSV(string path, string assetName, List<string> languageCodes)
     {
         if (!File.Exists(path))
         {
             Debug.LogError("Provided file doesn't exist");
             return;
         }
+
+        int numLanguages = languageCodes.Count;
 
         stringValues = new Dictionary<string, string[]>();
 
@@ -121,10 +123,10 @@ public class CSVImporter
         {
             assetName = "LocalisationData";
         }
-        WriteAsset(assetName, numLanguages);
+        WriteAsset(assetName, languageCodes);
     }
 
-    private static void WriteAsset(string assetName, int numLanguages)
+    private static void WriteAsset(string assetName, List<string> languageCodes)
     {
         Debug.Log("Writing Localisation Asset");
 
@@ -147,7 +149,9 @@ public class CSVImporter
             curData.rawData.Add(newDataPoint);
         }
 
-        curData.numLanguages = numLanguages;
+        curData.numLanguages = languageCodes.Count;
+        curData.languageCodes = new List<string>();
+        curData.languageCodes.AddRange(languageCodes);
 
         AssetDatabase.CreateAsset(curData, path);
         Selection.activeObject = curData;
@@ -156,26 +160,43 @@ public class CSVImporter
 
         AssetDatabase.SaveAssets();
 
-        if (numLanguages > 5)
+        for(int i = 0; i < languageCodes.Count; i++)
         {
-            // Update Chinese and Japanese text files      
-            string chineseText = GetAllTextForLanguage(languageIndex: 5);
-            chineseText = RemoveAlphanumericalCharacters(chineseText); // The alpha numerical characters are handled by falling back to the regular Phont
-            File.WriteAllText("Assets/Art/Universal_Art/UI_Art/Fonts/ChineseCharacters.txt", chineseText);
-            Debug.Log("ChineseCharacters.txt updated!");
-        }
-
-        if (numLanguages > 6)
-        {
-            string japaneseText = GetAllTextForLanguage(languageIndex: 6);
-            japaneseText = RemoveAlphanumericalCharacters(japaneseText);
-            File.WriteAllText("Assets/Art/Universal_Art/UI_Art/Fonts/JapaneseCharacters.txt", japaneseText);
-            Debug.Log("JapaneseCharacters.txt updated!");
+            string checkCode = languageCodes[i].ToLower();
+            WriteCharacterFile(checkCode, i);
+            /*
+            switch (checkCode)
+            {
+                case "th":
+                case "kr":
+                case "scn":
+                case "ru":
+                case "tch":
+                case "sch":
+                case "ar":
+                case "jp":
+                    WriteCharacterFile(checkCode, i);
+                    break;
+            }*/
         }
 
         AssetDatabase.SaveAssets();
+    }
 
-        Debug.Log("Please update 'NotoSansSC-Bold SDF' and 'MPLUSRounded1c-ExtraBold SDF' now");
+    private static void WriteCharacterFile(string languageCode, int languageIndex)
+    {
+        string languageText = GetAllTextForLanguage(languageIndex);
+        languageText = RemoveAlphanumericalCharacters(languageText); // The alpha numerical characters are handled by falling back to the regular font
+        string path = string.Format("Assets/Misc/LanguageCharacters_{0}.txt", languageCode);
+        TextAsset newTextAsset = new TextAsset(languageText);
+        AssetDatabase.CreateAsset(newTextAsset, path);
+
+        File.WriteAllText(path, languageText);
+        
+        AssetDatabase.SaveAssets();
+
+
+        Debug.LogFormat("Character file for {0} updated!", languageCode);
     }
 
     private static string RemoveAlphanumericalCharacters(string text)

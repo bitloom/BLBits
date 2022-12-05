@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using ArabicSupport;
 
 public class TextLocaliser : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class TextLocaliser : MonoBehaviour
     private TextMesh gameText;
     private TMP_Text tmpText;
 
-
+    public bool IsArabic { get; set; } = false;
 
     void OnEnable()
     {
@@ -62,6 +63,22 @@ public class TextLocaliser : MonoBehaviour
             if(targetFont != null)
             {
                 tmpText.font = targetFont;
+            }
+
+            bool isArabic = false;
+            if(IsArabic)
+            {
+                isArabic = true;
+            }
+            else if(overrideText == false && LocalisationManager.CurLanguageIs("AR"))
+            {
+                isArabic = true;
+            }
+
+            if(isArabic)
+            {
+                tmpText.isRightToLeftText = true;
+                text = ArabicFixer.Fix(text);
             }
 
             tmpText.SetText(text);

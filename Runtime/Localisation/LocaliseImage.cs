@@ -6,7 +6,9 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class LocaliseImage : MonoBehaviour
 {
+    public Sprite defaultSprite;
     public Sprite[] languageSprites;
+
     private Image targetImage;
 
     private void OnEnable()
@@ -41,7 +43,8 @@ public class LocaliseImage : MonoBehaviour
         {
             if (targetLanguage >= languageSprites.Length || languageSprites[targetLanguage] == null)
             {
-                Debug.LogError("Missing Localised Sprite for Language: " + LocalisationManager.GetLanguageName(targetLanguage), this);
+                targetImage.sprite = defaultSprite;
+                //Debug.LogError("Missing Localised Sprite for Language: " + LocalisationManager.GetLanguageName(targetLanguage), this);
             }
             else
             {

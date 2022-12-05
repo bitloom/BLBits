@@ -1,11 +1,15 @@
 using UnityEditor;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CSVImporterWindow : EditorWindow
 {
-    private string filePath = "";
-    private string assetName = "LocalisationData";
-    private int numLanguages = 7;
+    private static string filePath = "";
+    private static string assetName = "LocalisationData";
+    private static List<string> languages = new List<string>( new string[] { "en" });
+    private static string languagesString = "EN";
+    private static string languagesSeparator = "\t";
 
     void OnGUI()
     {
@@ -23,7 +27,27 @@ public class CSVImporterWindow : EditorWindow
 
         GUILayout.Space(10);
 
-        numLanguages = EditorGUILayout.IntField("Number of Languages", numLanguages);
+        EditorGUI.BeginChangeCheck();
+
+        languagesSeparator = EditorGUILayout.TextField("Separator", languagesSeparator);
+        languagesString = EditorGUILayout.TextField("Language Codes", languagesString);
+
+        if (EditorGUI.EndChangeCheck())
+        {
+            string[] codes = languagesString.Split(languagesSeparator);
+            languages.Clear();
+            languages.AddRange(codes);
+        }
+
+        int curIndentLevel = EditorGUI.indentLevel;
+        EditorGUI.indentLevel++;
+
+        for(int i = 0; i < languages.Count; i++)
+        {
+            EditorGUILayout.LabelField(languages[i]);
+        }
+
+        EditorGUI.indentLevel = curIndentLevel;
 
         GUILayout.Space(10);
 
@@ -35,7 +59,7 @@ public class CSVImporterWindow : EditorWindow
         {
             if (GUILayout.Button("Import File"))
             {
-                CSVImporter.LoadCSV(filePath, assetName, numLanguages);
+                CSVImporter.LoadCSV(filePath, assetName, languages);
                 Close();
             }
         }
