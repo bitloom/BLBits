@@ -192,7 +192,7 @@ public class CSVImporter
         AssetDatabase.CreateAsset(newTextAsset, path);
 
         File.WriteAllText(path, languageText);
-        
+
         AssetDatabase.SaveAssets();
 
 
