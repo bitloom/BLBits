@@ -5,11 +5,16 @@ using TMPro;
 
 public class LocalisedFontManager : MonoBehaviour
 {
-    public static TMP_FontAsset GetLanguageFont()
+    public static TMP_FontAsset GetLanguageFont(int targetLanguage = -1)
     {
         if(instance != null)
         {
-            return instance.GetFont(LocalisationManager.GetCurLanguage());
+            if(targetLanguage < 0)
+            {
+                targetLanguage = LocalisationManager.GetCurLanguage();
+            }
+
+            return instance.GetFont(targetLanguage);
         }
         return null;
     }

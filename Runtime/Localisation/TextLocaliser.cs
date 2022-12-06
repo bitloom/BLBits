@@ -80,6 +80,10 @@ public class TextLocaliser : MonoBehaviour
                 tmpText.isRightToLeftText = true;
                 text = ArabicFixer.Fix(text);
             }
+            else
+            {
+                tmpText.isRightToLeftText = false;
+            }
 
             tmpText.SetText(text);
 
