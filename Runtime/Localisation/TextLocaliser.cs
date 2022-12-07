@@ -77,10 +77,9 @@ public class TextLocaliser : MonoBehaviour
 
             if(isArabic)
             {
-                tmpText.isRightToLeftText = true;
-                text = ArabicFixer.Fix(text);
+                text = ArabicFixer.Fix(text, true);
             }
-            else
+            else // make sure there's no unecessary rtl going on
             {
                 tmpText.isRightToLeftText = false;
             }
