@@ -29,6 +29,18 @@ public class LocalisedFontManager : MonoBehaviour
         LocalisedFontManager.instance = this;
     }
 
+    private void Start()
+    {
+        if(instance != null && instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+    }
+
     private TMP_FontAsset GetFont(int targetLanguage)
     {
         if(targetLanguage >= 0 && targetLanguage < fonts.Length && fonts[targetLanguage] != null)

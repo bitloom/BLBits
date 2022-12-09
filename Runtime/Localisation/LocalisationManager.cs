@@ -172,6 +172,7 @@ public class LocalisationManager
 
     public static void SetLanguage(int newLanguage)
     {
+        Debug.LogFormat("Language Set to {0}", newLanguage);
         curLanguage = newLanguage;
         if (OnLanguageUpdate != null)
         {
@@ -214,5 +215,29 @@ public class LocalisationManager
     public static LocalisationData GetData()
     {
         return textData;
+    }
+
+    public static void ApplyText(TMPro.TMP_Text targetText, string targetKey)
+    {
+        if(string.IsNullOrEmpty(targetKey) || targetText == null)
+        {
+            return;
+        }
+
+        string targetString = GetText(targetKey);
+
+        if(CurLanguageIs("AR"))
+        {
+            targetString = ArabicSupport.ArabicFixer.Fix(targetString, true);
+        }
+
+        var targetFont = LocalisedFontManager.GetLanguageFont();
+        if (targetFont != null)
+        {
+            targetText.font = targetFont;
+        }
+
+        targetText.text = targetString;
+
     }
 }
