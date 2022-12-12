@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(LocalisationData))]
+/*[CustomEditor(typeof(LocalisationData))]
 public class LocalisationDataInspector : Editor
 {
     public override void OnInspectorGUI()
@@ -30,4 +30,4 @@ public class LocalisationDataInspector : Editor
             EditorGUILayout.LabelField(printString);
         }
     }
-}
+}*/

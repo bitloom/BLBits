@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 public class LocalisationManager
 {
@@ -102,7 +103,7 @@ public class LocalisationManager
 
     public static string GetText(string key)
     {
-        if (textData == null)
+        if (textData == null || curLanguage < 0)
         {
             Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
             return "ERROR";
@@ -172,7 +173,6 @@ public class LocalisationManager
 
     public static void SetLanguage(int newLanguage)
     {
-        Debug.LogFormat("Language Set to {0}", newLanguage);
         curLanguage = newLanguage;
         if (OnLanguageUpdate != null)
         {
@@ -239,5 +239,24 @@ public class LocalisationManager
 
         targetText.text = targetString;
 
+    }
+
+    public static string GetDateString(int dayOfMonth, int dayOfWeek, int month)
+    {
+        if(textData == null || curLanguage < 0)
+        {
+            return string.Empty;
+        }
+
+        string dayString = GetText("DAY_" + (dayOfWeek).ToString("00"));
+        string monthString = GetText("MONTH_" + (month).ToString("00"));
+
+        string dateFormat = GetText("DATE_FORMAT");
+
+        string returnString = Regex.Replace(dateFormat, "{dayname}", dayString);
+        returnString = Regex.Replace(returnString, "{month}", monthString);
+        returnString = Regex.Replace(returnString, "{day}", dayOfMonth.ToString());
+
+        return returnString;
     }
 }
