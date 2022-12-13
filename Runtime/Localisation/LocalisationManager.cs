@@ -18,6 +18,8 @@ public class LocalisationManager
 
     public static string LocalisationFileName = string.Empty;
 
+    
+
     public static int SystemCodeToIndex(string languageCode)
     {
         if(textData == null || languageCode == "en-US")
@@ -66,6 +68,24 @@ public class LocalisationManager
         {
             initialised = true;
             textData = Resources.Load(localisationDataName) as LocalisationData;
+
+            Debug.Log("Initialising Localisation Manager...");
+
+            if (textData)
+            {
+                Debug.Log("Successfully Loaded Text Data");
+
+                CreateDictionary();
+            }
+        }
+    }
+
+    public static void Initialise(LocalisationData data)
+    {
+        if (!initialised || textData == null)
+        {
+            textData = data;
+            initialised = true;
 
             Debug.Log("Initialising Localisation Manager...");
 
