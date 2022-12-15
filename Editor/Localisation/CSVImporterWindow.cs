@@ -6,7 +6,7 @@ using UnityEngine;
 public class CSVImporterWindow : EditorWindow
 {
     private static string filePath = "";
-    private static string assetName = "LocalisationData";
+    private static string assetName = "Assets/LocalisationData";
     private static List<string> languages = new List<string>( new string[] { "en" });
     private static string languagesString = "EN";
     private static string languagesSeparator = "\t";
@@ -51,7 +51,7 @@ public class CSVImporterWindow : EditorWindow
 
         GUILayout.Space(10);
 
-        assetName = EditorGUILayout.TextField("Asset Name", assetName);
+        assetName = EditorGUILayout.TextField("Asset Path", assetName);
 
         GUILayout.Space(10);
 

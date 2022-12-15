@@ -121,7 +121,7 @@ public class CSVImporter
 
         if (assetName == "")
         {
-            assetName = "LocalisationData";
+            assetName = "Assets/LocalisationData";
         }
         WriteAsset(assetName, languageCodes);
     }
@@ -130,7 +130,7 @@ public class CSVImporter
     {
         Debug.Log("Writing Localisation Asset");
 
-        string path = "Assets/Resources/GameData/" + assetName + ".asset";
+        string path = assetName + ".asset";
 
         LocalisationData curData = ScriptableObject.CreateInstance<LocalisationData>();
         curData.rawData = new List<LocalisationDataValue>();
