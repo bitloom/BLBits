@@ -19,6 +19,19 @@ public class LocalisedFontManager : MonoBehaviour
         return null;
     }
 
+    public static void CreateInstance(GameObject targetPrefab)
+    {
+        if(targetPrefab == null)
+        {
+            targetPrefab = Resources.Load<GameObject>("LocalisedFontManager");
+        }
+        
+        if(targetPrefab != null)
+        {
+            instance = Instantiate(targetPrefab).GetComponent<LocalisedFontManager>();
+        }
+    }
+
     private static LocalisedFontManager instance;
 
     public TMP_FontAsset defaultFont;
@@ -26,7 +39,14 @@ public class LocalisedFontManager : MonoBehaviour
     
     private void OnEnable()
     {
-        LocalisedFontManager.instance = this;
+        if (LocalisedFontManager.instance != null && LocalisedFontManager.instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            LocalisedFontManager.instance = this;
+        }
     }
 
     private void Start()

@@ -85,7 +85,7 @@ public class LocalisedTextDrawer : PropertyDrawer
 
     void SetupKeys()
     {
-        string folderPath = "Assets/Resources/GameData";
+        string folderPath = "Assets/AddressableResources/GameData";
         data = AssetDatabase.LoadAssetAtPath<LocalisationData>(Path.Combine(folderPath, "LocalisationData.asset"));
 
         keys.Clear();
