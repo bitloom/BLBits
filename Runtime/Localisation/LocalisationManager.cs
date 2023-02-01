@@ -103,10 +103,10 @@ public class LocalisationManager
         if (textData == null)
         {
             Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
-            return "ERROR";
+            return "ERROR: Localisation Failed To Load";
         }
 
-        string returnString = "MISSING LANGUAGE";
+        string returnString = "MISSING LANGUAGE NAME";
         if (text.Count > 0)
         {
             string[] languages;
@@ -126,7 +126,7 @@ public class LocalisationManager
         if (textData == null || curLanguage < 0)
         {
             Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
-            return "ERROR";
+            return "ERROR: Localisation Failed To Load";
         }
 
         if (text != null && text.ContainsKey(key))
@@ -135,9 +135,12 @@ public class LocalisationManager
             {
                 if (text[key][curLanguage] == "")
                 {
-                    return  string.Format("MISSING TEXT (Key: {0} Language: {1})", key, GetLanguageName(curLanguage));
+                    return text[key][0];
                 }
-                return text[key][curLanguage];
+                else
+                {
+                    return text[key][curLanguage];
+                }
             }
         }
         return string.Format("MISSING LOCALISED TEXT (Key: {0})", key);
@@ -157,7 +160,8 @@ public class LocalisationManager
             {
                 if (text[key][language] == "")
                 {
-                    return string.Format("MISSING TEXT (Key: {0} Language: {1})", key, GetLanguageName(curLanguage));
+                    return text[key][0];
+                    //return string.Format("MISSING TEXT (Key: {0} Language: {1})", key, GetLanguageName(curLanguage));
                 }
                 return text[key][language];
             }
@@ -171,7 +175,7 @@ public class LocalisationManager
         if (textData == null)
         {
             Debug.LogWarning("Trying to access Uninitialised Localisation Data!");
-            return "ERROR";
+            return "ERROR: Failed to load Localisation";
         }
 
         string result = GetText(key);
