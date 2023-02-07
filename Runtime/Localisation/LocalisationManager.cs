@@ -241,14 +241,14 @@ public class LocalisationManager
         return textData;
     }
 
-    public static void ApplyText(TMPro.TMP_Text targetText, string targetKey)
+    public static void ApplyText(TMPro.TMP_Text targetText, string targetKey, bool skipLocalisation = false)
     {
         if(string.IsNullOrEmpty(targetKey) || targetText == null)
         {
             return;
         }
 
-        string targetString = GetText(targetKey);
+        string targetString = skipLocalisation ? targetKey : GetText(targetKey);
 
         if(CurLanguageIs("AR"))
         {
