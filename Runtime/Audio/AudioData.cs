@@ -27,6 +27,11 @@ namespace BLBits
 
         public float Evaluate(bool on)
         {
+            if(volume <= 0)
+            {
+                return 0;
+            }
+
             if(on)
             {
                 if(attack <= 0)

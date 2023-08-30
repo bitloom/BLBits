@@ -87,6 +87,8 @@ public class TextLocaliser : MonoBehaviour
             tmpText.SetText(text);
 
             tmpText.ForceMeshUpdate();
+
+            LocalisationManager.UpdateLineSpacing(tmpText, targetFont, isArabic);
         }
     }
 

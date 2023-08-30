@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 public class LocalisationManager
 {
@@ -241,7 +240,7 @@ public class LocalisationManager
         return textData;
     }
 
-    public static void ApplyText(TMPro.TMP_Text targetText, string targetKey, bool skipLocalisation = false)
+    public static void ApplyText(TMPro.TMP_Text targetText, string targetKey, bool skipLocalisation = false, bool skipUpdateLineSpacing = false)
     {
         if(string.IsNullOrEmpty(targetKey) || targetText == null)
         {
@@ -250,7 +249,8 @@ public class LocalisationManager
 
         string targetString = skipLocalisation ? targetKey : GetText(targetKey);
 
-        if(CurLanguageIs("AR"))
+        bool isArabic = CurLanguageIs("AR");
+        if(isArabic)
         {
             targetString = ArabicSupport.ArabicFixer.Fix(targetString, true);
         }
@@ -263,6 +263,41 @@ public class LocalisationManager
 
         targetText.text = targetString;
 
+        if (skipUpdateLineSpacing == false)
+        {
+            UpdateLineSpacing(targetText, targetFont, isArabic);
+        }
+    }
+
+    public static void UpdateLineSpacing(TMPro.TMP_Text targetText, TMPro.TMP_FontAsset targetFont, bool isArabic)
+    {
+        if(targetFont == null || targetText == null)
+        {
+            return;
+        }
+
+        if (isArabic)
+        {
+            if (targetText.enableAutoSizing)
+            {
+                targetText.ForceMeshUpdate();
+                float curFontSize = targetText.fontSize;
+                targetText.enableAutoSizing = false;
+                targetText.fontSize = curFontSize;
+            }
+
+            targetText.verticalAlignment = TMPro.VerticalAlignmentOptions.Middle;
+
+            if (targetFont != null)
+            {
+                targetText.lineSpacing = (targetFont.faceInfo.lineHeight + targetFont.faceInfo.ascentLine) * -2;
+            }
+        }
+        else if (targetText.lineSpacing < 0)
+        {
+            targetText.lineSpacing = 0;
+            targetText.enableAutoSizing = true;
+        }
     }
 
     public static string GetDateString(int dayOfMonth, int dayOfWeek, int month)
